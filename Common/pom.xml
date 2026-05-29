@@ -10,7 +10,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>Core</artifactId>
+    <artifactId>Common</artifactId>
     <packaging>jar</packaging>
-    <name>Core</name>
+    <name>Common</name>
 </project>

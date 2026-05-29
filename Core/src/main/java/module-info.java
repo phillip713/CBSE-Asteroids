@@ -1,4 +1,4 @@
 module Core {
 
-    exports dk.sdu.cbse;
+    exports dk.sdu.cbse.core;
 }

@@ -19,6 +19,7 @@
 
   <modules>
     <module>Core</module>
+    <module>Common</module>
   </modules>
 
   <build>
@@ -51,7 +52,7 @@
           <arguments>
             <argument>--module-path=mods-mvn</argument>
             <argument>--class-path=libs/*</argument>
-            <argument>--module=Core/dk.sdu.cbse.App</argument>
+            <argument>--module=Core/dk.sdu.cbse.core.App</argument>
           </arguments>
         </configuration>
       </plugin>
