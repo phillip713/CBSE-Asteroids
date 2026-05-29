@@ -13,28 +13,13 @@ public class AsteroidPlugin implements IGamePluginService {
     @Override
     public void start(GameData gameData, World world) {
         for (int i = 0; i < INITIAL_ASTEROIDS; i++) {
-            world.addEntity(createLargeAsteroid(gameData));
+            double x = Math.random() * gameData.getDisplayWidth();
+            double y = Math.random() * gameData.getDisplayHeight();
+
+            world.addEntity(AsteroidFactory.createAsteroid(3, x, y)); // Large asteroid
         }
     }
 
-    private Entity createLargeAsteroid(GameData gameData) {
-        Asteroid asteroid = new Asteroid();
-        asteroid.setType(EntityType.ASTEROID);
-
-        // This single line now handles size, radius, and wireframe points!
-        asteroid.setSize(3);
-
-        asteroid.setX(Math.random() * gameData.getDisplayWidth());
-        asteroid.setY(Math.random() * gameData.getDisplayHeight());
-
-        double speed = 40.0 + Math.random() * 30.0;
-        double heading = Math.random() * Math.PI * 2;
-        asteroid.setDx(Math.cos(heading) * speed);
-        asteroid.setDy(Math.sin(heading) * speed);
-        asteroid.setRotation(Math.random() * Math.PI * 2);
-
-        return asteroid;
-    }
 
     @Override
     public void stop(GameData gameData, World world) {

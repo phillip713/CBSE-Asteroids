@@ -21,9 +21,10 @@ public class AsteroidControlSystem implements IEntityProcessorService {
                 // Handle Splitting and Destruction
                 if (asteroid.isDead()) {
                     if (asteroid.getSize() > 1) {
-                        // Spawn two smaller split segments
-                        world.addEntity(createChildAsteroid(asteroid, asteroid.getSize() - 1));
-                        world.addEntity(createChildAsteroid(asteroid, asteroid.getSize() - 1));
+                        int newSize = asteroid.getSize() - 1;
+                        // Spawn chunks directly via factory at current coordinates
+                        world.addEntity(AsteroidFactory.createAsteroid(newSize, asteroid.getX(), asteroid.getY()));
+                        world.addEntity(AsteroidFactory.createAsteroid(newSize, asteroid.getX(), asteroid.getY()));
                     }
                     world.removeEntity(asteroid);
                     continue;
@@ -40,23 +41,5 @@ public class AsteroidControlSystem implements IEntityProcessorService {
                 if (asteroid.getY() > gameData.getDisplayHeight()) asteroid.setY(0);
             }
         }
-    }
-
-    private Entity createChildAsteroid(Asteroid parent, int newSize) {
-        Asteroid child = new Asteroid();
-        child.setType(EntityType.ASTEROID);
-
-        // Automatically recalculates smaller bounds and shapes safely!
-        child.setSize(newSize);
-
-        child.setX(parent.getX());
-        child.setY(parent.getY());
-
-        double randomAngle = Math.random() * Math.PI * 2;
-        double speed = 60.0 + Math.random() * 40.0;
-        child.setDx(Math.cos(randomAngle) * speed);
-        child.setDy(Math.sin(randomAngle) * speed);
-
-        return child;
     }
 }
