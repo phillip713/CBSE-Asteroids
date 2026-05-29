@@ -19,6 +19,7 @@ public class PlayerPlugin implements IGamePluginService {
     private Entity createPlayerShip(GameData gameData) {
         Entity playerShip = new Player();
         playerShip.setType(EntityType.PLAYER);
+        playerShip.setLife(5);
 
         // Spawn right in the middle of the game window
         playerShip.setX(gameData.getDisplayWidth() / 2.0);

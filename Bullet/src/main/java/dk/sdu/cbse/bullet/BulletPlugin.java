@@ -18,6 +18,7 @@ public class BulletPlugin implements BulletSPI, IGamePluginService {
     @Override
     public Entity createBullet(Entity shooter, GameData gameData) {
         Entity bullet = new Bullet();
+        bullet.setLife(1);
         double speed = 350.0;
         bullet.setType(EntityType.BULLET);
 

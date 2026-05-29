@@ -18,6 +18,11 @@ public class EnemyControlSystem implements IEntityProcessorService {
         double dt = gameData.getDeltaTime();
 
         for (Entity entity : world.getEntities()) {
+            // Remove entity if dead
+            if (entity.isDead()) {
+                world.removeEntity(entity);
+                continue;
+            }
             if (entity instanceof Enemy) {
                 Enemy enemy = (Enemy) entity;
 

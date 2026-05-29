@@ -24,6 +24,7 @@
     <module>Bullet</module>
     <module>Enemy</module>
     <module>Asteroid</module>
+    <module>Collision</module>
   </modules>
 
   <dependencyManagement>

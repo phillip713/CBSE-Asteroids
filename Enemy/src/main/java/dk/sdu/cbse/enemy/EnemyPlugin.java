@@ -19,6 +19,7 @@ public class EnemyPlugin implements IGamePluginService {
     private Entity createEnemyShip(GameData gameData) {
         Entity enemyShip = new Enemy();
         enemyShip.setType(EntityType.ENEMY);
+        enemyShip.setLife(3);
 
         // Spawn randomly somewhere on screen
         enemyShip.setX(Math.random() * gameData.getDisplayWidth());

@@ -20,6 +20,7 @@ public class AsteroidPlugin implements IGamePluginService {
     private Entity createLargeAsteroid(GameData gameData) {
         Asteroid asteroid = new Asteroid();
         asteroid.setType(EntityType.ASTEROID);
+        asteroid.setLife(1);
         asteroid.setSize(3); // Start as Large
         asteroid.setRadius(25);
 

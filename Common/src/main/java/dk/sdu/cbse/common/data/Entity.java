@@ -11,6 +11,23 @@ public class Entity implements Serializable {
     private double radius;
     private EntityType type;
 
+    // Health and "dead" handling
+    private int life = 1; // Default fallback value
+    private boolean isDead = false;
+
+    public int getLife() { return life; }
+    public void setLife(int life) { this.life = life; }
+
+    public void reduceLife(int amount) {
+        this.life -= amount;
+        if (this.life <= 0) {
+            this.isDead = true;
+        }
+    }
+
+    public boolean isDead() { return isDead; }
+    public void setIsDead(boolean isDead) { this.isDead = isDead; }
+
     // Getters and setters
     public EntityType getType() { return type; }
     public void setType(EntityType type) { this.type = type; }
