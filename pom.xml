@@ -21,6 +21,7 @@
     <module>Core</module>
     <module>Common</module>
     <module>Player</module>
+    <module>Bullet</module>
   </modules>
 
   <dependencyManagement>

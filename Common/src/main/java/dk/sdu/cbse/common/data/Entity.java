@@ -9,8 +9,11 @@ public class Entity implements Serializable {
     private double dx, dy;
     private double rotation;
     private double radius;
+    private EntityType type;
 
     // Getters and setters
+    public EntityType getType() { return type; }
+    public void setType(EntityType type) { this.type = type; }
     public String getID() { return id.toString(); }
     public double getX() { return x; }
     public void setX(double x) { this.x = x; }

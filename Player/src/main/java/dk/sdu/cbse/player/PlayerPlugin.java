@@ -1,6 +1,7 @@
 package dk.sdu.cbse.player;
 
 import dk.sdu.cbse.common.data.Entity;
+import dk.sdu.cbse.common.data.EntityType;
 import dk.sdu.cbse.common.data.GameData;
 import dk.sdu.cbse.common.data.World;
 import dk.sdu.cbse.common.services.IGamePluginService;
@@ -17,6 +18,7 @@ public class PlayerPlugin implements IGamePluginService {
 
     private Entity createPlayerShip(GameData gameData) {
         Entity playerShip = new Player();
+        playerShip.setType(EntityType.PLAYER);
 
         // Spawn right in the middle of the game window
         playerShip.setX(gameData.getDisplayWidth() / 2.0);
