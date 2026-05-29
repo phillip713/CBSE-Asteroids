@@ -76,26 +76,47 @@ public class App extends Application {
     }
 
     private void draw() {
-        // Clean up visual shapes for entities removed from the world context
-        for (String entityId : polygons.keySet()) {
-            if (world.getEntities().stream().noneMatch(e -> e.getID().equals(entityId))) {
+        // 1. Safe Cleanup: Remove shapes for entities no longer in the world context
+        // Using removeIf avoids ConcurrentModificationExceptions completely
+        polygons.keySet().removeIf(entityId -> {
+            boolean missing = world.getEntities().stream().noneMatch(e -> e.getID().equals(entityId));
+            if (missing) {
                 gameWindow.getChildren().remove(polygons.get(entityId));
-                polygons.remove(entityId);
             }
-        }
+            return missing;
+        });
 
-        // Render or update active entities
+        // 2. Render or update active entities
         for (Entity entity : world.getEntities()) {
             Polygon polygon = polygons.get(entity.getID());
 
             if (polygon == null) {
                 polygon = new Polygon();
-                // Placeholder triangle shape if the component doesn't define specific polygon coordinates yet
-                polygon.getPoints().addAll(-6.0, -6.0, 10.0, 0.0, -6.0, 6.0);
+
+                // Extract our data-driven shape arrays
+                double[] shapeX = entity.getShapeX();
+                double[] shapeY = entity.getShapeY();
+
+                if (shapeX != null && shapeX.length > 0) {
+                    // Zip the relative X and Y coordinates into the JavaFX points sequence [x1, y1, x2, y2...]
+                    for (int i = 0; i < shapeX.length; i++) {
+                        polygon.getPoints().addAll(shapeX[i], shapeY[i]);
+                    }
+                } else {
+                    // Fallback standard triangle if a module doesn't define custom geometry
+                    polygon.getPoints().addAll(-6.0, -6.0, 10.0, 0.0, -6.0, 6.0);
+                }
+
+                // Stylize the wireframe to look like an old retro arcade cabinet
+                polygon.setStroke(javafx.scene.paint.Color.WHITE);
+                polygon.setFill(javafx.scene.paint.Color.BLACK); // or Color.TRANSPARENT
+                polygon.setStrokeWidth(1.5);
+
                 polygons.put(entity.getID(), polygon);
                 gameWindow.getChildren().add(polygon);
             }
 
+            // 3. Apply spatial transforms using JavaFX's built-in rendering engine
             polygon.setTranslateX(entity.getX());
             polygon.setTranslateY(entity.getY());
             polygon.setRotate(Math.toDegrees(entity.getRotation()));

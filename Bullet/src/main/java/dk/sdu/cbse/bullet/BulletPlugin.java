@@ -22,6 +22,11 @@ public class BulletPlugin implements BulletSPI, IGamePluginService {
         double speed = 350.0;
         bullet.setType(EntityType.BULLET);
 
+        // Small shape for bullets
+        bullet.setRadius(2);
+        bullet.setShapeX(new double[]{2, -2, -2, 2});
+        bullet.setShapeY(new double[]{2, 2, -2, -2});
+
         // Spawn slightly ahead of the shooter's nose
         bullet.setX(shooter.getX() + Math.cos(shooter.getRotation()) * shooter.getRadius());
         bullet.setY(shooter.getY() + Math.sin(shooter.getRotation()) * shooter.getRadius());
@@ -37,8 +42,7 @@ public class BulletPlugin implements BulletSPI, IGamePluginService {
 
     @Override
     public void stop(GameData gameData, World world) {
-        // Lifecycle Cleanup: If the bullet component is unloaded,
-        // cleanly purge all lingering projectiles from the active simulation.
+        // Clean up all bullets if unloaded
         for (Entity entity : world.getEntities()) {
             if (entity.getType() == EntityType.BULLET) {
                 world.removeEntity(entity);

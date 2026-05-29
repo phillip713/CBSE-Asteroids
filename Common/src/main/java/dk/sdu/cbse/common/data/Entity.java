@@ -28,7 +28,17 @@ public class Entity implements Serializable {
     public boolean isDead() { return isDead; }
     public void setIsDead(boolean isDead) { this.isDead = isDead; }
 
-    // Getters and setters
+    //Polygon wireframe handling
+    private double[] shapeX = new double[0];
+    private double[] shapeY = new double[0];
+
+    public double[] getShapeX() { return shapeX; }
+    public void setShapeX(double[] shapeX) { this.shapeX = shapeX; }
+
+    public double[] getShapeY() { return shapeY; }
+    public void setShapeY(double[] shapeY) { this.shapeY = shapeY; }
+
+    // Additional getters and setters
     public EntityType getType() { return type; }
     public void setType(EntityType type) { this.type = type; }
     public String getID() { return id.toString(); }

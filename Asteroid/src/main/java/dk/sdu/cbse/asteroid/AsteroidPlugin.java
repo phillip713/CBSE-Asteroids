@@ -20,21 +20,17 @@ public class AsteroidPlugin implements IGamePluginService {
     private Entity createLargeAsteroid(GameData gameData) {
         Asteroid asteroid = new Asteroid();
         asteroid.setType(EntityType.ASTEROID);
-        asteroid.setLife(1);
-        asteroid.setSize(3); // Start as Large
-        asteroid.setRadius(25);
 
-        // Spawn randomly across the map layout
+        // This single line now handles size, radius, and wireframe points!
+        asteroid.setSize(3);
+
         asteroid.setX(Math.random() * gameData.getDisplayWidth());
         asteroid.setY(Math.random() * gameData.getDisplayHeight());
 
-        // Constant drifting velocity vectors
-        double speed = 40.0 + Math.random() * 30.0; // Random steady drift speed
+        double speed = 40.0 + Math.random() * 30.0;
         double heading = Math.random() * Math.PI * 2;
         asteroid.setDx(Math.cos(heading) * speed);
         asteroid.setDy(Math.sin(heading) * speed);
-
-        // Give it a slow visual spin rate
         asteroid.setRotation(Math.random() * Math.PI * 2);
 
         return asteroid;

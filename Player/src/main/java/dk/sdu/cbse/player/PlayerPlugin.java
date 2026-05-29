@@ -21,19 +21,22 @@ public class PlayerPlugin implements IGamePluginService {
         playerShip.setType(EntityType.PLAYER);
         playerShip.setLife(5);
 
-        // Spawn right in the middle of the game window
+        // Spawn at center of screen
         playerShip.setX(gameData.getDisplayWidth() / 2.0);
         playerShip.setY(gameData.getDisplayHeight() / 2.0);
+        playerShip.setRadius(8);
+        playerShip.setRotation(Math.toRadians(270));
 
-        playerShip.setRadius(8); // Used later for physics circle collisions
-        playerShip.setRotation(Math.toRadians(270)); // Pointing straight up initially
+        // Define relative offsets for a sleek ship
+        playerShip.setShapeX(new double[]{8, -8, -4, -8});
+        playerShip.setShapeY(new double[]{0, -6, 0, 6});
 
         return playerShip;
     }
 
     @Override
     public void stop(GameData gameData, World world) {
-        // Clean up the entity if this module gets unloaded dynamically
+        // Clean up if unloaded
         world.removeEntity(player);
     }
 }

@@ -45,20 +45,15 @@ public class AsteroidControlSystem implements IEntityProcessorService {
     private Entity createChildAsteroid(Asteroid parent, int newSize) {
         Asteroid child = new Asteroid();
         child.setType(EntityType.ASTEROID);
-        child.setLife(1);
+
+        // Automatically recalculates smaller bounds and shapes safely!
         child.setSize(newSize);
 
-        // Scale physics properties based on split target tier
-        if (newSize == 2) child.setRadius(15);
-        if (newSize == 1) child.setRadius(7);
-
-        // Inherit parent location context
         child.setX(parent.getX());
         child.setY(parent.getY());
 
-        // Diverge velocity paths outwards dynamically
         double randomAngle = Math.random() * Math.PI * 2;
-        double speed = 60.0 + Math.random() * 40.0; // Smaller chunks drift faster
+        double speed = 60.0 + Math.random() * 40.0;
         child.setDx(Math.cos(randomAngle) * speed);
         child.setDy(Math.sin(randomAngle) * speed);
 
