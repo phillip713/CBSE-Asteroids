@@ -7,6 +7,7 @@ import dk.sdu.cbse.common.services.IEntityProcessorService;
 import dk.sdu.cbse.common.services.IGamePluginService;
 import dk.sdu.cbse.common.services.IPostEntityProcessorService;
 
+import dk.sdu.cbse.common.services.ServiceLocator;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.scene.Scene;
@@ -42,8 +43,9 @@ public class App extends Application {
         stage.setResizable(false);
         stage.show();
 
-        // 1. Discover and launch all active plugins (Player, Enemy, etc.)
-        for (IGamePluginService plugin : getServices(IGamePluginService.class)) {
+        // 💡 Discover and launch all plugins using the new ServiceLocator
+        // The moment this line runs, the ServiceLocator constructor fires and scans the folder!
+        for (IGamePluginService plugin : ServiceLocator.INSTANCE.getServices(IGamePluginService.class)) {
             plugin.start(gameData, world);
         }
 
@@ -65,12 +67,13 @@ public class App extends Application {
     }
 
     private void update() {
-        // Run standard processors (Movement, AI, Controls)
-        for (IEntityProcessorService processor : getServices(IEntityProcessorService.class)) {
+        // 💡 Fetch standard processors directly from the active dynamic layer
+        for (IEntityProcessorService processor : ServiceLocator.INSTANCE.getServices(IEntityProcessorService.class)) {
             processor.process(gameData, world);
         }
-        // Run post-processors (Collisions, Screen-wrapping)
-        for (IPostEntityProcessorService postProcessor : getServices(IPostEntityProcessorService.class)) {
+
+        // 💡 Fetch post-processors directly from the active dynamic layer
+        for (IPostEntityProcessorService postProcessor : ServiceLocator.INSTANCE.getServices(IPostEntityProcessorService.class)) {
             postProcessor.process(gameData, world);
         }
     }
@@ -134,11 +137,11 @@ public class App extends Application {
         if (code == KeyCode.RIGHT || code == KeyCode.D) gameData.setKey(GameData.RIGHT, isPressed);
         if (code == KeyCode.SPACE) gameData.setKey(GameData.SPACE, isPressed);
     }
-
+    /*
     // Generic helper utilizing ServiceLoader to pull implementations out of the mods-mvn folder at runtime
     private <T> Collection<T> getServices(Class<T> serviceType) {
         return ServiceLoader.load(serviceType).stream()
                 .map(ServiceLoader.Provider::get)
                 .collect(Collectors.toList());
-    }
+    }*/
 }
