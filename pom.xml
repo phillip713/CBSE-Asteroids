@@ -22,6 +22,7 @@
     <module>Common</module>
     <module>Player</module>
     <module>Bullet</module>
+    <module>Enemy</module>
   </modules>
 
   <dependencyManagement>
