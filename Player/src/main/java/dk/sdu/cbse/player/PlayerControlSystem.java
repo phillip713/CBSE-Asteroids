@@ -18,13 +18,13 @@ public class PlayerControlSystem implements IEntityProcessorService {
         double dt = gameData.getDeltaTime();
 
         for (Entity entity : world.getEntities()) {
-            // Remove entity if dead
-            if (entity.isDead()) {
-                world.removeEntity(entity);
-                continue;
-            }
-            if (entity instanceof Player) {
-                Player player = (Player) entity;
+
+            if (entity instanceof Player player) {
+                // Remove entity if dead
+                if (player.isDead()) {
+                    world.removeEntity(entity);
+                    continue;
+                }
 
                 // Decrement Weapon Cooldown State
                 if (player.getFireCooldown() > 0) {
