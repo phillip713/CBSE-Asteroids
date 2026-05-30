@@ -20,12 +20,17 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import javafx.scene.text.Text;
+import javafx.scene.text.Font;
+import javafx.scene.paint.Color;
+
 public class App extends Application {
 
     private final GameData gameData = new GameData();
     private final World world = new World();
     private final Pane gameWindow = new Pane();
     private final Map<String, Polygon> polygons = new ConcurrentHashMap<>();
+    private final Text scoreUiText = new Text();
 
     private Game game;
 
@@ -35,6 +40,15 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
+        gameWindow.setPrefSize(gameData.getDisplayWidth(), gameData.getDisplayHeight());
+
+        // 💡 Style and position our scoreboard overlay
+        scoreUiText.setFont(new Font("Courier New", 20));
+        scoreUiText.setFill(Color.GREENYELLOW);
+        scoreUiText.setX(20);
+        scoreUiText.setY(40);
+        gameWindow.getChildren().add(scoreUiText);
+
         // 💡 1. Initialize Spring container and retrieve the DI-wired Game bean
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ModuleConfig.class);
         this.game = context.getBean(Game.class);
@@ -83,6 +97,10 @@ public class App extends Application {
     }
 
     private void draw() {
+        // 💡 Update the text UI using our thread-safe local cache variable
+        scoreUiText.setText(String.format("SCORE: %05d   LIVES: %d",
+                ScoreSyncPostProcessor.currentScore,
+                ScoreSyncPostProcessor.currentHealth));
         // 1. Safe Cleanup: Remove shapes for entities no longer in the world context
         // Using removeIf avoids ConcurrentModificationExceptions completely
         polygons.keySet().removeIf(entityId -> {
