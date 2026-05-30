@@ -18,7 +18,7 @@ import javafx.stage.Stage;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class App extends Application {
 
@@ -27,29 +27,33 @@ public class App extends Application {
     private final Pane gameWindow = new Pane();
     private final Map<String, Polygon> polygons = new ConcurrentHashMap<>();
 
+    private Game game;
+
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage stage) {
+        // 💡 1. Initialize Spring container and retrieve the DI-wired Game bean
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ModuleConfig.class);
+        this.game = context.getBean(Game.class);
+
         gameWindow.setPrefSize(gameData.getDisplayWidth(), gameData.getDisplayHeight());
 
         Scene scene = new Scene(gameWindow);
         registerInputHandlers(scene);
 
         stage.setScene(scene);
-        stage.setTitle("Asteroids - CBSE");
+        stage.setTitle("Asteroids - CBSE - Spring DI");
         stage.setResizable(false);
         stage.show();
 
-        // 💡 Discover and launch all plugins using the new ServiceLocator
-        // The moment this line runs, the ServiceLocator constructor fires and scans the folder!
-        for (IGamePluginService plugin : ServiceLocator.INSTANCE.getServices(IGamePluginService.class)) {
+        // 💡 2. Use Spring's injected plugins instead of ServiceLocator
+        for (IGamePluginService plugin : game.getPluginServices()) {
             plugin.start(gameData, world);
         }
 
-        // 2. Start the core high-frequency game loop
         new AnimationTimer() {
             private long lastUpdateTime = System.nanoTime();
 
@@ -67,13 +71,13 @@ public class App extends Application {
     }
 
     private void update() {
-        // 💡 Fetch standard processors directly from the active dynamic layer
-        for (IEntityProcessorService processor : ServiceLocator.INSTANCE.getServices(IEntityProcessorService.class)) {
+        // 💡 3. Use Spring's injected processors
+        for (IEntityProcessorService processor : game.getEntityProcessors()) {
             processor.process(gameData, world);
         }
 
-        // 💡 Fetch post-processors directly from the active dynamic layer
-        for (IPostEntityProcessorService postProcessor : ServiceLocator.INSTANCE.getServices(IPostEntityProcessorService.class)) {
+        // 💡 4. Use Spring's injected post-processors
+        for (IPostEntityProcessorService postProcessor : game.getPostEntityProcessors()) {
             postProcessor.process(gameData, world);
         }
     }
@@ -137,11 +141,4 @@ public class App extends Application {
         if (code == KeyCode.RIGHT || code == KeyCode.D) gameData.setKey(GameData.RIGHT, isPressed);
         if (code == KeyCode.SPACE) gameData.setKey(GameData.SPACE, isPressed);
     }
-    /*
-    // Generic helper utilizing ServiceLoader to pull implementations out of the mods-mvn folder at runtime
-    private <T> Collection<T> getServices(Class<T> serviceType) {
-        return ServiceLoader.load(serviceType).stream()
-                .map(ServiceLoader.Provider::get)
-                .collect(Collectors.toList());
-    }*/
 }
