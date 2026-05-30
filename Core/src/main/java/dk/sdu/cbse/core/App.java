@@ -15,6 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Polygon;
 import javafx.stage.Stage;
+import javafx.scene.text.Text;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,6 +28,8 @@ public class App extends Application {
     private final Pane gameWindow = new Pane();
     private final Map<String, Polygon> polygons = new ConcurrentHashMap<>();
 
+    private final Text scoreText = new Text("SCORE: 0");
+
     private Game game;
 
     public static void main(String[] args) {
@@ -35,11 +38,17 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) {
-        // 💡 1. Initialize Spring container and retrieve the DI-wired Game bean
+        // Initialize Spring container and retrieve the DI-wired Game bean
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(ModuleConfig.class);
         this.game = context.getBean(Game.class);
 
         gameWindow.setPrefSize(gameData.getDisplayWidth(), gameData.getDisplayHeight());
+
+        scoreText.setX(20);
+        scoreText.setY(40);
+        scoreText.setFill(javafx.scene.paint.Color.BLACK);
+        scoreText.setStyle("-fx-font-size: 20px; -fx-font-family: 'Courier New';");
+        gameWindow.getChildren().add(scoreText);
 
         Scene scene = new Scene(gameWindow);
         registerInputHandlers(scene);
@@ -49,7 +58,7 @@ public class App extends Application {
         stage.setResizable(false);
         stage.show();
 
-        // 💡 2. Use Spring's injected plugins instead of ServiceLocator
+        // Use Spring's injected plugins
         for (IGamePluginService plugin : game.getPluginServices()) {
             plugin.start(gameData, world);
         }
@@ -57,6 +66,7 @@ public class App extends Application {
         new AnimationTimer() {
             private long lastUpdateTime = System.nanoTime();
 
+            // Handle delta time
             @Override
             public void handle(long now) {
                 double delta = (now - lastUpdateTime) / 1000000000.0;
@@ -71,20 +81,21 @@ public class App extends Application {
     }
 
     private void update() {
-        // 💡 3. Use Spring's injected processors
+        // Use Spring's injected processors
         for (IEntityProcessorService processor : game.getEntityProcessors()) {
             processor.process(gameData, world);
         }
 
-        // 💡 4. Use Spring's injected post-processors
+        // Use Spring's injected post-processors
         for (IPostEntityProcessorService postProcessor : game.getPostEntityProcessors()) {
             postProcessor.process(gameData, world);
         }
     }
 
     private void draw() {
-        // 1. Safe Cleanup: Remove shapes for entities no longer in the world context
-        // Using removeIf avoids ConcurrentModificationExceptions completely
+        scoreText.setText("SCORE: " + SimpleScoreTracker.currentScore);
+        scoreText.toFront();
+        // Cleanup
         polygons.keySet().removeIf(entityId -> {
             boolean missing = world.getEntities().stream().noneMatch(e -> e.getID().equals(entityId));
             if (missing) {
@@ -93,43 +104,42 @@ public class App extends Application {
             return missing;
         });
 
-        // 2. Render or update active entities
+        // Render or update active entities
         for (Entity entity : world.getEntities()) {
             Polygon polygon = polygons.get(entity.getID());
 
             if (polygon == null) {
                 polygon = new Polygon();
 
-                // Extract our data-driven shape arrays
                 double[] shapeX = entity.getShapeX();
                 double[] shapeY = entity.getShapeY();
 
                 if (shapeX != null && shapeX.length > 0) {
-                    // Zip the relative X and Y coordinates into the JavaFX points sequence [x1, y1, x2, y2...]
                     for (int i = 0; i < shapeX.length; i++) {
                         polygon.getPoints().addAll(shapeX[i], shapeY[i]);
                     }
                 } else {
-                    // Fallback standard triangle if a module doesn't define custom geometry
+                    // Standard triangle fallback
                     polygon.getPoints().addAll(-6.0, -6.0, 10.0, 0.0, -6.0, 6.0);
                 }
 
-                // Stylize the wireframe to look like an old retro arcade cabinet
+                // Stylization
                 polygon.setStroke(javafx.scene.paint.Color.WHITE);
-                polygon.setFill(javafx.scene.paint.Color.BLACK); // or Color.TRANSPARENT
+                polygon.setFill(javafx.scene.paint.Color.BLACK);
                 polygon.setStrokeWidth(1.5);
 
                 polygons.put(entity.getID(), polygon);
                 gameWindow.getChildren().add(polygon);
             }
 
-            // 3. Apply spatial transforms using JavaFX's built-in rendering engine
+            // Apply spatial transforms
             polygon.setTranslateX(entity.getX());
             polygon.setTranslateY(entity.getY());
             polygon.setRotate(Math.toDegrees(entity.getRotation()));
         }
     }
 
+    // Simple keypress setup
     private void registerInputHandlers(Scene scene) {
         scene.setOnKeyPressed(event -> toggleKey(event.getCode(), true));
         scene.setOnKeyReleased(event -> toggleKey(event.getCode(), false));

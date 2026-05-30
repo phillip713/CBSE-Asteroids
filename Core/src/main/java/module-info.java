@@ -2,6 +2,7 @@ module Core {
     requires Common;
     requires javafx.controls;
     requires spring.context;
+    requires spring.web;
 
     exports dk.sdu.cbse.core to javafx.graphics;
     uses dk.sdu.cbse.common.services.IEntityProcessorService;

@@ -29,6 +29,14 @@ public class ModuleConfig {
 
     @Bean
     public List<IPostEntityProcessorService> postEntityProcessingServices() {
-        return ServiceLoader.load(IPostEntityProcessorService.class).stream().map(ServiceLoader.Provider::get).collect(Collectors.toList());
+        List<IPostEntityProcessorService> list = ServiceLoader.load(IPostEntityProcessorService.class)
+                .stream()
+                .map(ServiceLoader.Provider::get)
+                .collect(Collectors.toList());
+
+        // Inject network tracker
+        list.add(new SimpleScoreTracker());
+        return list;
     }
+
 }
