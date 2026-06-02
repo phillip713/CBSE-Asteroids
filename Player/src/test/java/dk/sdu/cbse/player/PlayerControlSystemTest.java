@@ -11,7 +11,7 @@ public class PlayerControlSystemTest {
     private PlayerControlSystem playerControlSystem;
     private GameData gameData;
     private World world;
-    private Player player; // Using your concrete Player class now
+    private Player player;
 
     @BeforeEach
     public void setUp() {
@@ -19,11 +19,10 @@ public class PlayerControlSystemTest {
         gameData = new GameData();
         world = new World();
 
-        // Establish a baseline player state
         player = new Player();
         player.setX(100);
         player.setY(100);
-        player.setRotation(0); // Facing directly right (cos(0) = 1, sin(0) = 0)
+        player.setRotation(0);
         player.setDx(0);
         player.setDy(0);
         player.setIsDead(false);
@@ -33,11 +32,9 @@ public class PlayerControlSystemTest {
 
     @Test
     public void testPlayerAcceleratesForwardWhenUpKeyPressed() {
-        // Arrange
         gameData.setKey(GameData.UP, true);
-        gameData.setDeltaTime(1.0); // 1 second timestep to make math simple
+        gameData.setDeltaTime(1.0);
 
-        // Act
         playerControlSystem.process(gameData, world);
 
         // Assert

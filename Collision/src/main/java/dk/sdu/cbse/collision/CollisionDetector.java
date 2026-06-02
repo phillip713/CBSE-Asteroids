@@ -64,12 +64,12 @@ public class CollisionDetector implements IPostEntityProcessorService {
         }
     }
 
-    // Order-independent helper to see if a pair matches two targeted types
+    // Check if a pair matches two targeted types
     private boolean isTypePair(Entity e1, Entity e2, EntityType t1, EntityType t2) {
         return (e1.getType() == t1 && e2.getType() == t2) || (e1.getType() == t2 && e2.getType() == t1);
     }
 
-    // Order-independent helper to extract the correct object entity for targeted damage routing
+    // Find correct object entity for targeted damage routing
     private Entity getOfSpecificType(Entity e1, Entity e2, EntityType type) {
         return (e1.getType() == type) ? e1 : e2;
     }
