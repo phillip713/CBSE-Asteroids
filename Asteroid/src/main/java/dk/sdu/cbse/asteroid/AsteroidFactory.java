@@ -7,11 +7,10 @@ public class AsteroidFactory {
     public static Asteroid createAsteroid(int size, double x, double y) {
         Asteroid asteroid = new Asteroid();
         asteroid.setType(EntityType.ASTEROID);
-        asteroid.setSize(size); // This sets shape and radius automatically now!
+        asteroid.setSize(size);
         asteroid.setX(x);
         asteroid.setY(y);
 
-        // Calculate velocity vectors
         double randomAngle = Math.random() * Math.PI * 2;
         // Smaller pieces drift faster
         double speed = (size == 3) ? (40.0 + Math.random() * 30.0) : (60.0 + Math.random() * 40.0);

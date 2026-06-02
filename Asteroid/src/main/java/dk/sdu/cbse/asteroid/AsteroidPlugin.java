@@ -23,7 +23,6 @@ public class AsteroidPlugin implements IGamePluginService {
 
     @Override
     public void stop(GameData gameData, World world) {
-        // Purge all asteroids if the module gets dynamically unloaded
         for (Entity entity : world.getEntities()) {
             if (entity.getType() == EntityType.ASTEROID) {
                 world.removeEntity(entity);

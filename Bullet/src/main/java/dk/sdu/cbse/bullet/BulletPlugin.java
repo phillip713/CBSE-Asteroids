@@ -4,15 +4,14 @@ import dk.sdu.cbse.common.data.Entity;
 import dk.sdu.cbse.common.data.EntityType;
 import dk.sdu.cbse.common.data.GameData;
 import dk.sdu.cbse.common.data.World;
-import dk.sdu.cbse.common.services.BulletSPI;
+import dk.sdu.cbse.common.services.IBulletSPI;
 import dk.sdu.cbse.common.services.IGamePluginService;
 
-public class BulletPlugin implements BulletSPI, IGamePluginService {
+public class BulletPlugin implements IBulletSPI, IGamePluginService {
 
     @Override
     public void start(GameData gameData, World world) {
-        // The bullet module doesn't need to spawn anything at game boot.
-        // It waits around until the Player or Enemy requests a bullet via BulletSPI.
+
     }
 
     @Override
@@ -27,7 +26,7 @@ public class BulletPlugin implements BulletSPI, IGamePluginService {
         bullet.setShapeX(new double[]{2, -2, -2, 2});
         bullet.setShapeY(new double[]{2, 2, -2, -2});
 
-        // Spawn slightly ahead of the shooter's nose
+        // Spawn ahead of the shooter's nose
         bullet.setX(shooter.getX() + Math.cos(shooter.getRotation()) * shooter.getRadius());
         bullet.setY(shooter.getY() + Math.sin(shooter.getRotation()) * shooter.getRadius());
 

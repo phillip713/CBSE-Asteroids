@@ -3,7 +3,7 @@ package dk.sdu.cbse.player;
 import dk.sdu.cbse.common.data.Entity;
 import dk.sdu.cbse.common.data.GameData;
 import dk.sdu.cbse.common.data.World;
-import dk.sdu.cbse.common.services.BulletSPI;
+import dk.sdu.cbse.common.services.IBulletSPI;
 import dk.sdu.cbse.common.services.IEntityProcessorService;
 import java.util.ServiceLoader;
 
@@ -26,12 +26,12 @@ public class PlayerControlSystem implements IEntityProcessorService {
                     continue;
                 }
 
-                // Decrement Weapon Cooldown State
+                // Fire cooldown
                 if (player.getFireCooldown() > 0) {
                     player.setFireCooldown(player.getFireCooldown() - dt);
                 }
 
-                // Movement Inputs
+                // Movement inputs
                 if (gameData.isKeyPressed(GameData.LEFT)) {
                     player.setRotation(player.getRotation() - rotationSpeed * dt);
                 }
@@ -43,10 +43,10 @@ public class PlayerControlSystem implements IEntityProcessorService {
                     player.setDy(player.getDy() + Math.sin(player.getRotation()) * acceleration * dt);
                 }
 
-                // Weapon Firing Input
+                // Weapon firing input
                 if (gameData.isKeyPressed(GameData.SPACE) && player.getFireCooldown() <= 0) {
-                    // Dynamically look up available bullet factories
-                    ServiceLoader.load(BulletSPI.class).stream()
+                    // Look up bullet factories
+                    ServiceLoader.load(IBulletSPI.class).stream()
                             .map(ServiceLoader.Provider::get)
                             .forEach(bulletSPI -> {
                                 Entity bullet = bulletSPI.createBullet(player, gameData);
@@ -55,7 +55,6 @@ public class PlayerControlSystem implements IEntityProcessorService {
                     player.setFireCooldown(0.25); // Set a quarter-second weapon cooldown
                 }
 
-                // Kinematic Vector Application
                 player.setX(player.getX() + player.getDx() * dt);
                 player.setY(player.getY() + player.getDy() * dt);
                 player.setDx(player.getDx() * friction);
